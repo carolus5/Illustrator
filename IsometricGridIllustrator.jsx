@@ -1,5 +1,5 @@
 // ============================================================
-// Cuadrícula Isométrica 120° en mm — Versión Final Segura
+// Cuadrícula Isométrica 120° en mm — Versión Segura
 // Totalmente compatible con ExtendScript (Illustrator CS6–2026)
 // ✓ Sin Math.sign
 // ✓ Sin llaves sobrantes
@@ -7,6 +7,7 @@
 // ✓ Margen geométrico que garantiza cubrir TODO el artboard
 // ✓ Guías automáticas
 // ✓ Lado real del rombo = valor introducido (mm)
+// Author: Juan Carlos Sánchez Guirao
 // ============================================================
 
 (function () {
