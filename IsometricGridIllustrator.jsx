@@ -124,7 +124,7 @@
     // ============================================================
     //                     FAMILIA 1: VERTICALES
     // ============================================================
-    forStep(startX, endX, gridSize, function (x) {
+    forStep(startX, endX, gridSize/2, function (x) {
         makeGuide(x, bottom, x, top);
     });
 
