@@ -7,7 +7,7 @@
 // ✓ Margen geométrico que garantiza cubrir TODO el artboard
 // ✓ Guías automáticas
 // ✓ Lado real del rombo = valor introducido (mm)
-// Author: Juan Carlos Sánchez Guirao
+// Author: Juan Carlos Sánchez Guirao + ChatGPT + Copilot
 // ============================================================
 
 (function () {
