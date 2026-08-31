@@ -1,50 +1,25 @@
 // ============================================================
-// Cuadrícula Isométrica 120° en mm — Versión Segura
-// Totalmente compatible con ExtendScript (Illustrator CS6–2026)
-// ✓ Sin Math.sign
-// ✓ Sin llaves sobrantes
-// ✓ Sin variables fuera de ámbito
-// ✓ Margen geométrico que garantiza cubrir TODO el artboard
-// ✓ Guías automáticas
-// ✓ Lado real del rombo = valor introducido (mm)
-// Author: Juan Carlos Sánchez Guirao + ChatGPT + Copilot
+// Cuadrícula Isométrica 120° en mm — Versión Compatible MacOS
 // ============================================================
 
 (function () {
-    // Comprobar documento
     if (app.documents.length === 0) {
         alert("No hay ningún documento abierto.");
         return;
     }
 
     var doc = app.activeDocument;
-    var MM = 2.83464567; // puntos por mm
+    var MM = 2.83464567; // Puntos por mm
 
-    // ============================================================
-    //                  DIÁLOGO DE CONFIGURACIÓN
-    // ============================================================
-    var dlg = new Window('dialog', 'Cuadrícula Isométrica 120°');
-    dlg.orientation = 'column';
+    // Entrada de datos mediante diálogos nativos
+    var inputSize = prompt("Lado del rombo (mm):", "10", "Cuadrícula Isométrica 120°");
+    if (inputSize === null) return;
 
-    dlg.add('statictext', undefined, 'Lado del rombo (mm):');
-    var sizeInput = dlg.add('edittext', undefined, '10');
-    sizeInput.characters = 8;
+    var inputWidth = prompt("Grosor de línea (mm):", "0.2", "Cuadrícula Isométrica 120°");
+    if (inputWidth === null) return;
 
-    dlg.add('statictext', undefined, 'Grosor de línea (mm):');
-    var widthInput = dlg.add('edittext', undefined, '0.2');
-    widthInput.characters = 8;
-
-    var b = dlg.add('group');
-    b.add('button', undefined, 'OK', { name: 'ok' });
-    b.add('button', undefined, 'Cancelar', { name: 'cancel' });
-
-    if (dlg.show() !== 1) return;
-
-    // ============================================================
-    //                  PARÁMETROS NUMÉRICOS
-    // ============================================================
-    var lado_mm = Number(sizeInput.text);
-    var strokeW = Number(widthInput.text) * MM;
+    var lado_mm = Number(inputSize);
+    var strokeW = Number(inputWidth) * MM;
 
     if (!(isFinite(lado_mm) && lado_mm > 0)) {
         alert("El lado debe ser un número mayor que 0.");
@@ -56,30 +31,22 @@
     }
 
     // Conversión del lado real del rombo → separación entre líneas
-    // En isometría 120°, separación = L · sin(60°)
     var sin60 = Math.sin(60 * Math.PI / 180);
     var gridSize = lado_mm * MM * sin60;
 
-    // ============================================================
-    //                  ÁNGULOS ISOMÉTRICOS (120°)
-    // ============================================================
+    // Ángulos isométricos (120°)
     var slope210 = Math.tan(210 * Math.PI / 180); // negativa
     var slope330 = Math.tan(330 * Math.PI / 180); // positiva
 
-    // ============================================================
-    //                 ARTBOARD DEL DOCUMENTO
-    // ============================================================
+    // Artboard del documento
     var ab = doc.artboards[doc.artboards.getActiveArtboardIndex()].artboardRect;
     var left   = ab[0];
     var top    = ab[1];
     var right  = ab[2];
     var bottom = ab[3];
-    var width  = right - left;
     var height = top - bottom;
 
-    // ============================================================
-    //              CAPA DE GUÍAS PARA LA CUADRÍCULA
-    // ============================================================
+    // Capa de guías
     var layer = doc.layers.add();
     layer.name = "Isometric Grid 120°";
 
@@ -92,9 +59,7 @@
         try { p.guides = true; } catch (e) {}
     }
 
-    // ============================================================
-    //        ITERADOR SEGURO (sin Math.sign, plenamente compatible)
-    // ============================================================
+    // Iterador seguro
     function sign(v) {
         return (v > 0) ? 1 : (v < 0 ? -1 : 0);
     }
@@ -110,36 +75,27 @@
         }
     }
 
-    // ============================================================
-    //        MARGEN GEOMÉTRICO (COBERTURA COMPLETA GARANTIZADA)
-    // ============================================================
+    // Margen geométrico
     var dx330 = Math.abs(height / slope330);
     var dx210 = Math.abs(height / slope210);
-
     var margin = dx330 + dx210 + 4 * gridSize;
 
     var startX = left - margin;
     var endX   = right + margin;
 
-    // ============================================================
-    //                     FAMILIA 1: VERTICALES
-    // ============================================================
-    forStep(startX, endX, gridSize/2, function (x) {
+    // Familia 1: Verticales
+    forStep(startX, endX, gridSize / 2, function (x) {
         makeGuide(x, bottom, x, top);
     });
 
-    // ============================================================
-    //               FAMILIA 2: DIAGONALES 330°
-    // ============================================================
+    // Familia 2: Diagonales 330°
     forStep(startX, endX, gridSize, function (x0) {
         var xTop = x0 + (top / slope330);
         var xBot = x0 + (bottom / slope330);
         makeGuide(xTop, top, xBot, bottom);
     });
 
-    // ============================================================
-    //               FAMILIA 3: DIAGONALES 210°
-    // ============================================================
+    // Familia 3: Diagonales 210°
     forStep(startX, endX, gridSize, function (x0) {
         var xTop = x0 + (top / slope210);
         var xBot = x0 + (bottom / slope210);
